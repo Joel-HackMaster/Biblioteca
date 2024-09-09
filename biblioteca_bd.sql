@@ -74,6 +74,38 @@ CREATE TABLE IF NOT EXISTS public.tt_libro(
     CONSTRAINT fk_genero FOREIGN KEY(id_estadoLibro) REFERENCES tt_generoLibro(id) ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS public.tt_prestamoLibro (
+    id CHAR(10) PRIMARY KEY,
+    id_atencion CHAR(10),
+    hora_pr VARCHAR(45),
+    estado_pr VARCHAR(45),
+    cant_pr INT,
+    CONSTRAINT fk_atencion FOREIGN KEY(id_atencion) REFERENCES tt_atencionUsuario(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS public.tt_auditoriaLibro (
+    id INT PRIMARY KEY,
+    id_libro CHAR(10) NOT NULL,
+    fecha_au TIMESTAMP,
+    detalle_au VARCHAR(45),
+    usuario_cr CHAR(10),
+    usuario_ed CHAR(10),
+    usuario_el CHAR(10),
+    CONSTRAINT fk_libro FOREIGN KEY (id_libro) REFERENCES tt_libro(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_usercreated FOREIGN KEY (usuario_cr) REFERENCES tt_usuario(id) ON UPDATE CASCADE,
+    CONSTRAINT fk_userupdate FOREIGN KEY (usuario_ed) REFERENCES tt_usuario(id) ON UPDATE CASCADE,
+    CONSTRAINT fk_userdelete FOREIGN KEY (usuario_el) REFERENCES tt_usuario(id) ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS public.tt_detallePrestamo (
+    id INT PRIMARY KEY,
+    id_prestamo CHAR(10),
+    id_libro CHAR(10),
+    fecha_pr DATE,
+    fecha_dv DATE,
+    CONSTRAINT fk_prestamo FOREIGN KEY (id_prestamo) REFERENCES tt_prestamoLibro(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT fk_libro FOREIGN KEY (id_libro) REFERENCES tt_libro(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
 CREATE OR REPLACE FUNCTION generarCodigo(
 	elemento VARCHAR
@@ -90,6 +122,9 @@ $$ LANGUAGE plpgsql;
 
 /** USR-0001 **/
 /** USR-0002 ***/
+
+
+
 
 CREATE OR REPLACE PROCEDURE agregarUsuario(
     nombre VARCHAR,
